@@ -1,0 +1,5 @@
+quiet: False
+keeptree: True
+disable-version-string: True
+with-expecter: True
+outpkg: mocks
