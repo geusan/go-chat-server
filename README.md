@@ -1,25 +1,42 @@
 # Chat server
 
-채팅서버 튜토리얼
+채팅서버 튜토리얼 작성
 
 ## 목표
 
-- 채팅 서버를 작업해본다.
-- 채팅방의 최대 규모는 10인으로 제한한다.
-- 채팅의 콘텐츠는 텍스트와, 이미지로 제한한다.
+- 채팅 서버를 생성한다.
+- 채팅방의 최대 규모는 5인으로 제한한다.
+- 채팅의 콘텐츠는 텍스트와 이미지로 제한한다.
 
 
 ## 계획
-채팅서버는 두가지 형태를 개발한다.
-1. Socket 활용 버전
-2. WebRTC를 활용 버전
+- 채팅 기능은 소켓을 활용한다.(gorilla socket)
+- 채팅 클라이언트 React로 작성
+- [ ] 채팅 서버 개발
+    - [ ] 채팅 서비스 API 서버, 채팅 서버 분리
+- [ ] API 서버 구축 with echo
+- [ ] swagger를 이용한 API document 툴 개발
+- [ ] ORM을 이용 (gorm)
+- [ ] unit test 작성 연습 포함(Mockery)
 
-다음의 순서로 개발을 시작한다.
+## 명령어
 
-- [ ] 채팅 클라이언트 개발
-- [ ] 채팅 API 서버 개발
-- [ ] 채팅 룸 서버 개발(socket)
-- [ ] 채팅 룸 서버2 개발(rtpc): 스턴서버를 연결하여 클라이언트들 끼리 연결
-- [ ] 채팅 클라이언트에 rtpc 추가
+Swag
+```bash
+# swag 실행시 gorm.Model을 못찾는 이슈가 있는데 내부 디펜던시 관련 옵션 포함
+swag init --parseDependency --parseInternal
 
-## 참고
+```
+
+Mockery
+```bash
+# 전체 경로 mocks 생성
+go generate ./...
+```
+
+DB
+```bash
+# gorm의 AutoMigrate 활용
+# TODO: migration manager에 대한 연구 필요
+go run cli/migration.go
+```
