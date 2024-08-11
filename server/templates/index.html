@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebSocket</title>
+  </head>
+
+  <body>
+    <button type="button" onclick="makeChatroom()">make chatroom</button>
+    <button type="button" onclick="connectChatroom()">connect chatroom</button>
+    <p id="output"></p>
+    <input id="text-input" onkeyup="onEnter" />
+    <script>
+      function addChat(text) {
+        var out = document.getElementById("output");
+        out.innerHTML += text + "<br>";
+      }
+      function connectChatroom() {
+        let chatroomName = prompt("enter chatroom name");
+        let loc = window.location;
+        let uri = "ws:";
+
+        if (loc.protocol === "https:") {
+          uri = "wss:";
+        }
+        uri += "//" + loc.host;
+        uri += loc.pathname + "ws" + "/" + chatroomName;
+
+        ws = new WebSocket(uri);
+
+        ws.onopen = function () {
+          console.log("Connected");
+        };
+        ws.onmessage = function (evt) {
+          addChat("Server: " + evt.data);
+        };
+        window.addEventListener("keyup", (e) => {
+          if (e.key !== "Enter") {
+            return;
+          }
+          const input = document.getElementById("text-input");
+          const text = input.value;
+          if (!text) return;
+          addChat("Client: " + text);
+          ws.send(text);
+          input.value = "";
+        });
+      }
+
+      function makeChatroom() {
+        let chatroomName = prompt("enter chatroom name");
+        let f = new FormData();
+        f.append("chatroomName", chatroomName);
+        let loc = window.location;
+        let url = "http://" + loc.host + "/newchat";
+        console.log(url);
+        fetch(url, {
+          method: "POST",
+          body: 'chatroomName=' + chatroomName,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        })
+          .then((res) => res.json().then((r) => console.log(r)))
+          .catch((e) => console.error(e));
+      }
+
+      function onEnter(e) {
+        console.log(e);
+      }
+    </script>
+  </body>
+</html>
