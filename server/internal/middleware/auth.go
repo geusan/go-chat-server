@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"api-server/auth"
 	"api-server/domain"
 	"os"
 
@@ -10,14 +9,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func UseAuthMiddleware(e *echo.Group, authService *auth.AuthService) {
+//go:generate mockery --name AuthService
+type AuthService interface {
+	FindUserByNameAndPassword(name string, password string) *domain.User
+	Register(name string, password string) *domain.User
+	FindUserById(id uint) *domain.User
+}
+
+func UseAuthMiddleware(e *echo.Group, authService AuthService) {
 	config := echojwt.Config{
 		SigningKey:  []byte(os.Getenv("SECRET_KEY")),
 		TokenLookup: "header:Authorization:Bearer ,cookie:_auth",
-		ErrorHandler: func(c echo.Context, err error) error {
-			println("ErrorHandler", err.Error())
-			return err
-		},
 	}
 	e.Use(echojwt.WithConfig(config), func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {

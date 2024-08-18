@@ -45,12 +45,14 @@ func (m *ChatroomRepository) Create(name string, owner *domain.User) *domain.Cha
 	if res.Error != nil {
 		panic(res.Error)
 	}
-	res.Scan(chatroom)
 	return chatroom
 }
 
 func (m *ChatroomRepository) Delete(id uint) error {
-	res := m.Conn.Model(&domain.Chatroom{}).Delete(&domain.Chatroom{ID: id})
+	res := m.Conn.
+		Model(&domain.Chatroom{}).
+		Unscoped().
+		Delete(&domain.Chatroom{ID: id})
 	if res.Error != nil {
 		panic(res)
 	}

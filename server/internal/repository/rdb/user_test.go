@@ -43,6 +43,25 @@ func TestFindUser(t *testing.T) {
 	assert.Equal(t, name, user.Name)
 }
 
+func TestFindUserById(t *testing.T) {
+	db, mock := rdb.NewMockDB(t)
+	mockRepo := rdb.NewUserRepository(db)
+	expectedId := uint(1)
+	name := "John"
+	password := "salt"
+	rows := sqlmock.
+		NewRows([]string{"Id", "Name", "Password"}).
+		AddRow(expectedId, name, rdb.Salt(password))
+
+	mock.
+		ExpectQuery("^SELECT (.+) LIMIT ?").
+		WithArgs(expectedId, 1).
+		WillReturnRows(rows)
+	user := mockRepo.FindById(expectedId)
+
+	assert.Equal(t, expectedId, user.Id)
+}
+
 func TestDeleteUser(t *testing.T) {
 	db, mock := rdb.NewMockDB(t)
 	mockRepo := rdb.NewUserRepository(db)
