@@ -1,24 +1,33 @@
 package middleware
 
 import (
+	"api-server/auth"
+	"api-server/domain"
+	"os"
+
 	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
-// jwtCustomClaims are custom claims extending default ones.
-// See https://github.com/golang-jwt/jwt for more examples
-type jwtCustomClaims struct {
-	Name  string `json:"name"`
-	Admin bool   `json:"admin"`
-	jwt.RegisteredClaims
-}
-
-func UseAuthMiddleware(e *echo.Group) {
-	e.Use(echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte("secret"),
-		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(jwtCustomClaims)
+func UseAuthMiddleware(e *echo.Group, authService *auth.AuthService) {
+	config := echojwt.Config{
+		SigningKey:  []byte(os.Getenv("SECRET_KEY")),
+		TokenLookup: "header:Authorization:Bearer ,cookie:_auth",
+		ErrorHandler: func(c echo.Context, err error) error {
+			println("ErrorHandler", err.Error())
+			return err
 		},
-	}))
+	}
+	e.Use(echojwt.WithConfig(config), func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			token := c.Get("user").(*jwt.Token)
+			claims := &domain.JwtCustomClaims{}
+			jwt.ParseWithClaims(token.Raw, claims, config.KeyFunc)
+			user := authService.FindUserById(claims.UserId)
+			// add user to context
+			c.Set("auth", *user)
+			return next(c)
+		}
+	})
 }

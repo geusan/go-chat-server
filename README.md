@@ -8,6 +8,11 @@
 - 채팅방의 최대 규모는 5인으로 제한한다.
 - 채팅의 콘텐츠는 텍스트와 이미지로 제한한다.
 
+## Libraries
+- echo server
+- ORM: gorm
+- Docs: swagger
+- testing: mockery
 
 ## 계획
 - 채팅 기능은 소켓을 활용한다.(gorilla socket)

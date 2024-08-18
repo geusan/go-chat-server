@@ -3,9 +3,6 @@ package main
 import (
 	"flag"
 
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-
 	"api-server/auth"
 	"api-server/chat"
 	"api-server/internal/repository/rdb"
@@ -40,7 +37,7 @@ var address = flag.String("addr", ":8080", "http service address")
 // @BasePath /v1
 func main() {
 	flag.Parse()
-	db, err := gorm.Open(sqlite.Open("sqlite3.db"), &gorm.Config{})
+	db, err := rdb.OpenDB()
 	if err != nil {
 		logrus.Error("error in DB", err)
 		return
@@ -56,9 +53,11 @@ func main() {
 	e.Static("/", "./templates")
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	v1 := e.Group("/v1")
-	rest.NewAuthHandler(v1, authService)
-	localMiddleware.UseAuthMiddleware(v1)
-	rest.NewChatroomHandler(v1, chatService)
+	anonymouseRoute := v1.Group("")
+	authorizedRoute := v1.Group("")
+	rest.NewAuthHandler(anonymouseRoute, authService)
+	localMiddleware.UseAuthMiddleware(authorizedRoute, authService)
+	rest.NewChatroomHandler(authorizedRoute, chatService, authService)
 
 	e.Logger.Fatal(e.Start(*address))
 }

@@ -3,14 +3,16 @@ package rest
 import (
 	"api-server/domain"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
 //go:generate mockery --name AuthService
 type AuthService interface {
-	Login(name string, password string) *domain.User
+	FindUserByNameAndPassword(name string, password string) *domain.User
 	Register(name string, password string) *domain.User
+	FindUserById(id uint) *domain.User
 }
 
 type AuthHandler struct {
@@ -24,36 +26,49 @@ func NewAuthHandler(e *echo.Group, svc AuthService) {
 	e.POST("/register", handler.Register)
 }
 
-// ListAccounts lists all existing accounts
+// Login user
 //
-//	@Summary      Login
-//	@Description  get accounts
-//	@Tags         auth
-//	@Accept       json
-//	@Produce      json
-//	@Param        body    body     domain.AddUser  true  "name"
-//	@Success      200  {object}   domain.User
-//	@Failure      400  {object}  ResponseError
-//	@Failure      404  {object}  ResponseError
-//	@Failure      500  {object}  ResponseError
-//	@Router       /login [post]
+// @Summary      Login
+// @Description  login with id and password
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        body    body     domain.AddUser  true  "name"
+// @Success      200  {object}   domain.ResponseUser
+// @Failure      400  {object}  ResponseError
+// @Failure      404  {object}  ResponseError
+// @Failure      500  {object}  ResponseError
+// @Header       200  {string}  Authorization  "Bearer XXX"
+// @Router       /login [post]
 func (h *AuthHandler) Login(c echo.Context) error {
-	var body struct {
-		name     string
-		password string
-	}
+	var body domain.AddUser
 	if err := c.Bind(&body); err != nil {
 		return err
 	}
-	user := h.Service.Login(body.name, body.password)
+	user := h.Service.FindUserByNameAndPassword(body.Name, body.Password)
 	user.Password = ""
-	return c.JSON(http.StatusOK, user)
+	token, err := user.GenerateJWT()
+	if err != nil {
+		println("error is occured : ", err)
+	}
+	// Set cookie for Auth
+	cookie := new(http.Cookie)
+	cookie.Name = "_auth"
+	cookie.Value = "Bearer " + token
+	cookie.Expires = time.Now().Add(24 * time.Hour)
+	c.SetCookie(cookie)
+	responseBody := &domain.ResponseUser{
+		Id:    user.Id,
+		Name:  user.Name,
+		Token: cookie.Value,
+	}
+	return c.JSON(http.StatusOK, responseBody)
 }
 
-// ListAccounts lists all existing accounts
+// Register User
 //
 //	@Summary      Register
-//	@Description  get accounts
+//	@Description  create user with name and password
 //	@Tags         auth
 //	@Accept       json
 //	@Produce      json
@@ -68,8 +83,6 @@ func (h *AuthHandler) Register(c echo.Context) error {
 	if err := c.Bind(&body); err != nil {
 		return err
 	}
-
-	println(body.Name, body.Password)
 	user := h.Service.Register(body.Name, body.Password)
 	user.Password = ""
 	return c.JSON(http.StatusOK, user)

@@ -3,73 +3,122 @@ package rest
 import (
 	"api-server/chat"
 	"api-server/domain"
-	"api-server/internal/middleware"
-	"context"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
+//go:generate mockery --name ChatService
 type ChatService interface {
-	Fetch(ctx context.Context) []domain.Chatroom
+	FindById(id uint) *domain.Chatroom
+	Fetch() []domain.Chatroom
 	GetHub(chatroom string) *chat.Hub
 	Create(name string, user *domain.User) *domain.Chatroom
 	Delete(chatroom *domain.Chatroom)
 }
 
 type ChatroomHandler struct {
-	Service ChatService
+	ChatService ChatService
+	UserService AuthService
 }
 
-func NewChatroomHandler(e *echo.Group, svc ChatService) {
+func NewChatroomHandler(e *echo.Group, svc ChatService, authService AuthService) {
 	handler := &ChatroomHandler{
-		Service: svc,
+		ChatService: svc,
+		UserService: authService,
 	}
-	router := e.Group("/rooms")
-	middleware.UseAuthMiddleware(router)
-	router.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			println("Hey~~~")
-			next(c)
-			return nil
-		}
-	})
-	router.GET("/rooms", handler.Fetch)
-	router.POST("/rooms", handler.CreateChatroom)
-	router.GET("/rooms/:chatroom/open", handler.OpenChat)
-	router.GET("/rooms/:chatroom/close", handler.CloseChat)
+
+	e.GET("/rooms", handler.Fetch)
+	e.POST("/rooms", handler.CreateChatroom)
+	e.DELETE("/rooms/:roomId", handler.RemoveChatroom)
+	e.GET("/rooms/:roomId/open", handler.OpenChat)
+	e.GET("/rooms/:roomId/close", handler.CloseChat)
 }
 
+// Fetch chatrooms
+//
+// @Summary Fetch Chatrooms
+// @Description Get list of chatrooms
+// @Tags chat
+// @Accept json
+// @Produce json
+// @Param	Authorization	header	string	true "Bearer XXX"
+// @Success	200	{array}		[]domain.Chatroom
+// @Success	400	{object}	ResponseError
+// @Success	404	{object}	ResponseError
+// @Success	500	{object}	ResponseError
+// @Router       /rooms [get]
 func (h *ChatroomHandler) Fetch(c echo.Context) error {
-	return c.JSON(http.StatusOK, "")
+	chats := h.ChatService.Fetch()
+	return c.JSON(http.StatusOK, chats)
 }
 
+type CreateChatroomDTO struct {
+	Name string `json:"name" example:"new chatroom"`
+}
+
+// Create Chatroom
+//
+// @Summary Create chatroom
+// @Description Create new chatroom
+// @Tags chat
+// @Accept json
+// @Produce json
+// @Param	Authorization	header	string	true "Bearer XXX"
+// @Param	body	body	CreateChatroomDTO true "create chatroom dto"
+// @Success	200	{array}		domain.Chatroom
+// @Success	400	{object}	ResponseError
+// @Success	404	{object}	ResponseError
+// @Success	500	{object}	ResponseError
+// @Router       /rooms [post]
 func (h *ChatroomHandler) CreateChatroom(c echo.Context) error {
-	// user := c.Get("user").(*jwt.Claims)
-	var body struct {
-		name string
-	}
-	ParseBody(c, body)
+	user := c.Get("auth").(domain.User)
+	var body CreateChatroomDTO
+	body = ParseBody(c, body)
+	chat := h.ChatService.Create(body.Name, &user)
 
-	// h.Service.Create()
-	return nil
+	return c.JSON(http.StatusOK, *chat)
 }
 
+// Remove Chatroom
+//
+// @Summary Delete chatroom
+// @Description Delete chatroom
+// @Tags chat
+// @Accept json
+// @Produce json
+// @Param	Authorization	header	string	true "Bearer XXX"
+// @Param	roomId	path int true "delete chatroom id"
+// @Success	200	{array}		domain.Chatroom
+// @Success	400	{object}	ResponseError
+// @Success	404	{object}	ResponseError
+// @Success	500	{object}	ResponseError
+// @Router       /rooms/{roomId} [delete]
 func (h *ChatroomHandler) RemoveChatroom(c echo.Context) error {
-	return nil
+	rawRoomId := c.Param("roomId")
+	roomId, err := strconv.ParseInt(rawRoomId, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	chatroom := h.ChatService.FindById(uint(roomId))
+
+	h.ChatService.Delete(chatroom)
+	return c.JSON(http.StatusOK, "")
 }
 
 func (h *ChatroomHandler) OpenChat(c echo.Context) error {
 	chatroom := c.Param("chatroom")
-	hub := h.Service.GetHub(chatroom)
+	hub := h.ChatService.GetHub(chatroom)
 	openWebsocket(hub, c.Response().Writer, c.Request())
 	return nil
 }
 
 func (h *ChatroomHandler) CloseChat(c echo.Context) error {
 	chatroom := c.Param("chatroom")
-	hub := h.Service.GetHub(chatroom)
+	hub := h.ChatService.GetHub(chatroom)
 	hub.Close()
 	return nil
 }

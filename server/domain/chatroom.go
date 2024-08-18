@@ -9,7 +9,7 @@ type Chatroom struct {
 	ID      uint   `json:"id"`
 	Name    string `json:"name"`
 	Limit   int    `json:"limit"`
-	OwnerID uint   `json:"ownerId"`
-	Owner   User   `json:"owner"`
+	OwnerID uint   `json:"-"`
+	Owner   User   `json:"-"`
 	Users   []User `json:"users" gorm:"many2many:user_chatrooms;"`
 }

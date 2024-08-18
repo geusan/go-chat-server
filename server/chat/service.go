@@ -1,8 +1,6 @@
 package chat
 
 import (
-	"context"
-
 	"api-server/domain"
 )
 
@@ -10,11 +8,12 @@ import (
 type UserRepository interface {
 	FindOne(name string, password string) (result *domain.User, err error)
 	Create(d *domain.User) *domain.User
+	Delete(id uint) error
 }
 
 //go:generate mockery --name ChatroomRepository
 type ChatroomRepository interface {
-	GetChatroom(id uint) *domain.Chatroom
+	FindById(id uint) *domain.Chatroom
 	Fetch() []domain.Chatroom
 	Create(name string, owner *domain.User) *domain.Chatroom
 	Delete(id uint) error
@@ -32,9 +31,14 @@ func NewChatService(u UserRepository, c ChatroomRepository) *ChatService {
 	}
 }
 
-func (s *ChatService) Fetch(ctx context.Context) []domain.Chatroom {
+func (s *ChatService) Fetch() []domain.Chatroom {
 	chatrooms := s.chatroomRepo.Fetch()
 	return chatrooms
+}
+
+func (s *ChatService) FindById(id uint) *domain.Chatroom {
+	chatroom := s.chatroomRepo.FindById(id)
+	return chatroom
 }
 
 var hubMap = make(map[string]*Hub)
