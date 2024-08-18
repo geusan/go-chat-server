@@ -24,62 +24,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/accounts": {
-            "get": {
-                "description": "get accounts",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "accounts"
-                ],
-                "summary": "List accounts",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "email",
-                        "description": "name search by q",
-                        "name": "q",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.User"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ResponseError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ResponseError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/rest.ResponseError"
-                        }
-                    }
-                }
-            }
-        },
         "/login": {
             "post": {
-                "description": "get accounts",
+                "description": "login with id and password",
                 "consumes": [
                     "application/json"
                 ],
@@ -105,7 +52,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.User"
+                            "$ref": "#/definitions/domain.ResponseUser"
+                        },
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "Bearer XXX"
+                            }
                         }
                     },
                     "400": {
@@ -131,7 +84,7 @@ const docTemplate = `{
         },
         "/register": {
             "post": {
-                "description": "get accounts",
+                "description": "create user with name and password",
                 "consumes": [
                     "application/json"
                 ],
@@ -180,6 +133,182 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/rooms": {
+            "get": {
+                "description": "Get list of chatrooms",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Fetch Chatrooms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer XXX",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/domain.Chatroom"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create new chatroom",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Create chatroom",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer XXX",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "create chatroom dto",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest.CreateChatroomDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Chatroom"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/rooms/{roomId}": {
+            "delete": {
+                "description": "Delete chatroom",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Delete chatroom",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer XXX",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "delete chatroom id",
+                        "name": "roomId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Chatroom"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -187,9 +316,54 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Luther"
                 },
                 "password": {
+                    "type": "string",
+                    "example": "umbrella"
+                }
+            }
+        },
+        "domain.Chatroom": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.User"
+                    }
+                }
+            }
+        },
+        "domain.ResponseUser": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "token": {
                     "type": "string"
                 }
             }
@@ -226,6 +400,15 @@ const docTemplate = `{
                 "valid": {
                     "description": "Valid is true if Time is not NULL",
                     "type": "boolean"
+                }
+            }
+        },
+        "rest.CreateChatroomDTO": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "new chatroom"
                 }
             }
         },
