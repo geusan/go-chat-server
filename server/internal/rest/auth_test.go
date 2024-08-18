@@ -30,9 +30,7 @@ func TestRegister(t *testing.T) {
 	mockService.On("Register", username, password).Return(&domain.User{Name: username, Password: password})
 
 	body := &domain.AddUser{Name: username, Password: password}
-	buf, err := json.Marshal(body)
-	assert.NoError(t, err)
-	c, req, rec := testing_utils.NewTestHttp(t, context.TODO(), echo.POST, "/register", bytes.NewBuffer(buf))
+	c, req, rec := testing_utils.NewTestHttp(t, context.TODO(), echo.POST, "/register", body)
 	req.Header.Set("Content-Type", "application/json")
 
 	handler := rest.AuthHandler{Service: mockService}
@@ -58,8 +56,7 @@ func TestLogin(t *testing.T) {
 	body := &domain.AddUser{Name: username, Password: password}
 	buf, err := json.Marshal(body)
 	assert.NoError(t, err)
-	c, req, rec := testing_utils.NewTestHttp(t, context.TODO(), echo.POST, "/register", bytes.NewBuffer(buf))
-	req.Header.Set("Content-Type", "application/json")
+	c, _, rec := testing_utils.NewTestHttp(t, context.TODO(), echo.POST, "/register", bytes.NewBuffer(buf))
 
 	handler := rest.AuthHandler{Service: mockService}
 	err = handler.Login(c)
