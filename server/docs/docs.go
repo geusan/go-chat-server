@@ -11,9 +11,9 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
+            "name": "담당자 마운틴",
+            "url": "mailto:dnay2k@gmail.com",
+            "email": "dnay2k@gmail.com"
         },
         "license": {
             "name": "Apache 2.0",
@@ -429,8 +429,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/v1",
 	Schemes:          []string{},
-	Title:            "Swagger Example API",
-	Description:      "This is a sample server Petstore server.",
+	Title:            "Go Chatserver Tutorial API",
+	Description:      "소켓을 이용한 채팅서버 API 문서",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

@@ -1,13 +1,13 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a sample server Petstore server.",
-        "title": "Swagger Example API",
+        "description": "소켓을 이용한 채팅서버 API 문서",
+        "title": "Go Chatserver Tutorial API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
+            "name": "담당자 마운틴",
+            "url": "mailto:dnay2k@gmail.com",
+            "email": "dnay2k@gmail.com"
         },
         "license": {
             "name": "Apache 2.0",

@@ -21,14 +21,13 @@ import (
 
 var address = flag.String("addr", ":8080", "http service address")
 
-// @title Swagger Example API
+// @title Go Chatserver Tutorial API
 // @version 1.0
-// @description This is a sample server Petstore server.
+// @description 소켓을 이용한 채팅서버 API 문서
 // @termsOfService http://swagger.io/terms/
 
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
+// @contact.name 담당자 마운틴
+// @contact.email dnay2k@gmail.com
 
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
