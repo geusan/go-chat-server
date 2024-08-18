@@ -163,12 +163,12 @@ func (_c *ChatroomRepository_Fetch_Call) RunAndReturn(run func() []domain.Chatro
 	return _c
 }
 
-// GetChatroom provides a mock function with given fields: id
-func (_m *ChatroomRepository) GetChatroom(id uint) *domain.Chatroom {
+// FindById provides a mock function with given fields: id
+func (_m *ChatroomRepository) FindById(id uint) *domain.Chatroom {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetChatroom")
+		panic("no return value specified for FindById")
 	}
 
 	var r0 *domain.Chatroom
@@ -183,30 +183,30 @@ func (_m *ChatroomRepository) GetChatroom(id uint) *domain.Chatroom {
 	return r0
 }
 
-// ChatroomRepository_GetChatroom_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatroom'
-type ChatroomRepository_GetChatroom_Call struct {
+// ChatroomRepository_FindById_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindById'
+type ChatroomRepository_FindById_Call struct {
 	*mock.Call
 }
 
-// GetChatroom is a helper method to define mock.On call
+// FindById is a helper method to define mock.On call
 //   - id uint
-func (_e *ChatroomRepository_Expecter) GetChatroom(id interface{}) *ChatroomRepository_GetChatroom_Call {
-	return &ChatroomRepository_GetChatroom_Call{Call: _e.mock.On("GetChatroom", id)}
+func (_e *ChatroomRepository_Expecter) FindById(id interface{}) *ChatroomRepository_FindById_Call {
+	return &ChatroomRepository_FindById_Call{Call: _e.mock.On("FindById", id)}
 }
 
-func (_c *ChatroomRepository_GetChatroom_Call) Run(run func(id uint)) *ChatroomRepository_GetChatroom_Call {
+func (_c *ChatroomRepository_FindById_Call) Run(run func(id uint)) *ChatroomRepository_FindById_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(uint))
 	})
 	return _c
 }
 
-func (_c *ChatroomRepository_GetChatroom_Call) Return(_a0 *domain.Chatroom) *ChatroomRepository_GetChatroom_Call {
+func (_c *ChatroomRepository_FindById_Call) Return(_a0 *domain.Chatroom) *ChatroomRepository_FindById_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *ChatroomRepository_GetChatroom_Call) RunAndReturn(run func(uint) *domain.Chatroom) *ChatroomRepository_GetChatroom_Call {
+func (_c *ChatroomRepository_FindById_Call) RunAndReturn(run func(uint) *domain.Chatroom) *ChatroomRepository_FindById_Call {
 	_c.Call.Return(run)
 	return _c
 }
