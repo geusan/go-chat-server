@@ -2,14 +2,13 @@ package main
 
 import (
 	"api-server/domain"
+	"api-server/internal/repository/rdb"
 
 	"github.com/sirupsen/logrus"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 func main() {
-	db, err := gorm.Open(sqlite.Open("sqlite3.db"), &gorm.Config{})
+	db, err := rdb.OpenDB()
 	if err != nil {
 		logrus.Error("error in DB", err)
 		return
