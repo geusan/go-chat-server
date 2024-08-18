@@ -19,10 +19,10 @@
 - 채팅 클라이언트 React로 작성
 - [ ] 채팅 서버 개발
     - [ ] 채팅 서비스 API 서버, 채팅 서버 분리
-- [ ] API 서버 구축 with echo
-- [ ] swagger를 이용한 API document 툴 개발
-- [ ] ORM을 이용 (gorm)
-- [ ] unit test 작성 연습 포함(Mockery)
+- [x] API 서버 구축 with echo
+- [x] swagger를 이용한 API document 툴 개발
+- [x] ORM을 이용 (gorm)
+- [x] unit test 작성 연습 포함(Mockery)
 
 ## 명령어
 
@@ -45,3 +45,8 @@ DB
 # TODO: migration manager에 대한 연구 필요
 go run cli/migration.go
 ```
+
+## 추가 작업
+- [ ] 기능이 변경되며 발생한 rdb, service, rest 등 테스트 추가 작업
+- [ ] middleware 테스트 추가
+- [ ] DTO와 AddUser 등 이름이 다른 DTO 이름 통일
