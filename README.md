@@ -47,6 +47,6 @@ go run cli/migration.go
 ```
 
 ## 추가 작업
-- [ ] 기능이 변경되며 발생한 rdb, service, rest 등 테스트 추가 작업
+- [x] 기능이 변경되며 발생한 rdb, service, rest 등 테스트 추가 작업
 - [ ] middleware 테스트 추가
 - [ ] DTO와 AddUser 등 이름이 다른 DTO 이름 통일

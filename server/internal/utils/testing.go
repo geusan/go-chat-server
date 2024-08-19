@@ -12,11 +12,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func NewTestHttp[T interface{}](t *testing.T, ctx context.Context, method string, url string, body T) (c echo.Context, req *http.Request, res *httptest.ResponseRecorder) {
+func buildBodyReader(rawBody interface{}) ([]byte, error) {
+	if t, ok := rawBody.(string); ok {
+		return []byte(t), nil
+	}
+	if rawBody == nil {
+		return []byte{}, nil
+	}
+	buff, err := json.Marshal(rawBody)
+	return []byte(buff), err
+}
+
+func NewTestHttp(t *testing.T, ctx context.Context, method string, url string, rawBody interface{}) (c echo.Context, req *http.Request, res *httptest.ResponseRecorder) {
 	e := echo.New()
-	buf, err := json.Marshal(body)
+	body, err := buildBodyReader(rawBody)
 	assert.NoError(t, err)
-	req, err = http.NewRequestWithContext(ctx, method, url, bytes.NewBuffer(buf))
+	req, err = http.NewRequestWithContext(ctx, method, url, bytes.NewBuffer(body))
 	assert.NoError(t, err)
 	res = httptest.NewRecorder()
 	c = e.NewContext(req, res)
