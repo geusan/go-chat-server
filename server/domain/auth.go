@@ -7,7 +7,6 @@ import (
 // jwtCustomClaims are custom claims extending default ones.
 // See https://github.com/golang-jwt/jwt for more examples
 type JwtCustomClaims struct {
-	// jwt.RegisteredClaims
-	jwt.MapClaims
+	jwt.RegisteredClaims
 	UserId uint `json:"userId"`
 }

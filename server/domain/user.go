@@ -2,6 +2,7 @@ package domain
 
 import (
 	"os"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
@@ -26,9 +27,11 @@ type ResponseUser struct {
 }
 
 func (u *User) GenerateJWT() (string, error) {
-	t := jwt.NewWithClaims(jwt.SigningMethodHS256, &JwtCustomClaims{
-		UserId: u.Id,
-	})
+	claim := new(JwtCustomClaims)
+	claim.UserId = u.Id
+	claim.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Duration(7) * time.Hour))
+
+	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	s, err := t.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	return s, err
 }
