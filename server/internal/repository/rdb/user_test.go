@@ -38,7 +38,11 @@ func TestFindUser(t *testing.T) {
 		ExpectQuery("^SELECT (.+) LIMIT ?").
 		WithArgs(name, rdb.Salt(password), 1).
 		WillReturnRows(rows)
-	user, err := mockRepo.FindOne(name, password)
+	query := &domain.User{
+		Name:     name,
+		Password: password,
+	}
+	user, err := mockRepo.FindOne(query)
 	assert.NoError(t, err)
 	assert.Equal(t, name, user.Name)
 }

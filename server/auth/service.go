@@ -6,7 +6,7 @@ import (
 
 //go:generate mockery --name UserRepository
 type UserRepository interface {
-	FindOne(name string, password string) (result *domain.User, err error)
+	FindOne(query *domain.User) (result *domain.User, err error)
 	FindById(id uint) (result *domain.User)
 	Create(d *domain.User) *domain.User
 	Delete(id uint) error
@@ -21,9 +21,24 @@ func NewAuthService(u UserRepository) *AuthService {
 }
 
 func (a *AuthService) FindUserByNameAndPassword(name string, password string) *domain.User {
-	user, err := a.userRepo.FindOne(name, password)
+	query := &domain.User{
+		Name:     name,
+		Password: password,
+	}
+	user, err := a.userRepo.FindOne(query)
 	if err != nil {
 		panic(err)
+	}
+	return user
+}
+
+func (a *AuthService) FindUserByName(name string) *domain.User {
+	query := &domain.User{
+		Name: name,
+	}
+	user, err := a.userRepo.FindOne(query)
+	if err != nil {
+		return nil
 	}
 	return user
 }

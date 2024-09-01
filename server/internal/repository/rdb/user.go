@@ -16,13 +16,16 @@ func NewUserRepository(conn *gorm.DB) *UserRepository {
 	return &UserRepository{conn}
 }
 
-func (m *UserRepository) FindOne(name string, password string) (result *domain.User, err error) {
+func (m *UserRepository) FindOne(query *domain.User) (result *domain.User, err error) {
+	if query.Password != "" {
+		query.Password = Salt(query.Password)
+	}
 	res := m.Conn.
 		Model(&domain.User{}).
-		Where(&domain.User{Name: name, Password: Salt(password)}).
+		Where(query).
 		First(&result)
 	if res.Error != nil {
-		panic(res.Error)
+		return nil, res.Error
 	}
 	return result, nil
 }

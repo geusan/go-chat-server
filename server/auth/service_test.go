@@ -74,3 +74,24 @@ func TestFindUserByNameAndPassword(t *testing.T) {
 		mockUserRepo.AssertExpectations(t)
 	})
 }
+
+func TestFindUserByName(t *testing.T) {
+	mockUserRepo := new(mocks.UserRepository)
+	name := "John"
+	mockUser := &domain.User{
+		Id:   uint(1),
+		Name: name,
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		mockUserRepo.
+			On("FindOne", mockUser.Name, mockUser.Password).
+			Return(mockUser, nil).
+			Once()
+		service := auth.NewAuthService(mockUserRepo)
+		acturalUser := service.FindUserByName(mockUser.Name)
+		assert.Equal(t, mockUser.Name, acturalUser.Name)
+		assert.Equal(t, mockUser.Password, acturalUser.Password)
+		mockUserRepo.AssertExpectations(t)
+	})
+}

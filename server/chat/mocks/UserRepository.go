@@ -115,9 +115,9 @@ func (_c *UserRepository_Delete_Call) RunAndReturn(run func(uint) error) *UserRe
 	return _c
 }
 
-// FindOne provides a mock function with given fields: name, password
-func (_m *UserRepository) FindOne(name string, password string) (*domain.User, error) {
-	ret := _m.Called(name, password)
+// FindOne provides a mock function with given fields: query
+func (_m *UserRepository) FindOne(query *domain.User) (*domain.User, error) {
+	ret := _m.Called(query)
 
 	if len(ret) == 0 {
 		panic("no return value specified for FindOne")
@@ -125,19 +125,19 @@ func (_m *UserRepository) FindOne(name string, password string) (*domain.User, e
 
 	var r0 *domain.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string) (*domain.User, error)); ok {
-		return rf(name, password)
+	if rf, ok := ret.Get(0).(func(*domain.User) (*domain.User, error)); ok {
+		return rf(query)
 	}
-	if rf, ok := ret.Get(0).(func(string, string) *domain.User); ok {
-		r0 = rf(name, password)
+	if rf, ok := ret.Get(0).(func(*domain.User) *domain.User); ok {
+		r0 = rf(query)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string, string) error); ok {
-		r1 = rf(name, password)
+	if rf, ok := ret.Get(1).(func(*domain.User) error); ok {
+		r1 = rf(query)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -151,15 +151,14 @@ type UserRepository_FindOne_Call struct {
 }
 
 // FindOne is a helper method to define mock.On call
-//   - name string
-//   - password string
-func (_e *UserRepository_Expecter) FindOne(name interface{}, password interface{}) *UserRepository_FindOne_Call {
-	return &UserRepository_FindOne_Call{Call: _e.mock.On("FindOne", name, password)}
+//   - query *domain.User
+func (_e *UserRepository_Expecter) FindOne(query interface{}) *UserRepository_FindOne_Call {
+	return &UserRepository_FindOne_Call{Call: _e.mock.On("FindOne", query)}
 }
 
-func (_c *UserRepository_FindOne_Call) Run(run func(name string, password string)) *UserRepository_FindOne_Call {
+func (_c *UserRepository_FindOne_Call) Run(run func(query *domain.User)) *UserRepository_FindOne_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(string))
+		run(args[0].(*domain.User))
 	})
 	return _c
 }
@@ -169,7 +168,7 @@ func (_c *UserRepository_FindOne_Call) Return(result *domain.User, err error) *U
 	return _c
 }
 
-func (_c *UserRepository_FindOne_Call) RunAndReturn(run func(string, string) (*domain.User, error)) *UserRepository_FindOne_Call {
+func (_c *UserRepository_FindOne_Call) RunAndReturn(run func(*domain.User) (*domain.User, error)) *UserRepository_FindOne_Call {
 	_c.Call.Return(run)
 	return _c
 }

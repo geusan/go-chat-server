@@ -13,6 +13,7 @@ type AuthService interface {
 	FindUserByNameAndPassword(name string, password string) *domain.User
 	Register(name string, password string) *domain.User
 	FindUserById(id uint) *domain.User
+	FindUserByName(name string) *domain.User
 }
 
 type AuthHandler struct {
@@ -82,6 +83,12 @@ func (h *AuthHandler) Register(c echo.Context) error {
 	var body domain.AddUser
 	if err := c.Bind(&body); err != nil {
 		return err
+	}
+	exsist := h.Service.FindUserByName(body.Name)
+	if exsist != nil {
+		return c.JSON(http.StatusUnauthorized, ResponseError{
+			Message: "이미 있습니다.",
+		})
 	}
 	user := h.Service.Register(body.Name, body.Password)
 	user.Password = ""

@@ -6,7 +6,7 @@ import (
 
 //go:generate mockery --name UserRepository
 type UserRepository interface {
-	FindOne(name string, password string) (result *domain.User, err error)
+	FindOne(query *domain.User) (result *domain.User, err error)
 	Create(d *domain.User) *domain.User
 	Delete(id uint) error
 }

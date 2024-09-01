@@ -69,6 +69,54 @@ func (_c *AuthService_FindUserById_Call) RunAndReturn(run func(uint) *domain.Use
 	return _c
 }
 
+// FindUserByName provides a mock function with given fields: name
+func (_m *AuthService) FindUserByName(name string) *domain.User {
+	ret := _m.Called(name)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindUserByName")
+	}
+
+	var r0 *domain.User
+	if rf, ok := ret.Get(0).(func(string) *domain.User); ok {
+		r0 = rf(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.User)
+		}
+	}
+
+	return r0
+}
+
+// AuthService_FindUserByName_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindUserByName'
+type AuthService_FindUserByName_Call struct {
+	*mock.Call
+}
+
+// FindUserByName is a helper method to define mock.On call
+//   - name string
+func (_e *AuthService_Expecter) FindUserByName(name interface{}) *AuthService_FindUserByName_Call {
+	return &AuthService_FindUserByName_Call{Call: _e.mock.On("FindUserByName", name)}
+}
+
+func (_c *AuthService_FindUserByName_Call) Run(run func(name string)) *AuthService_FindUserByName_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string))
+	})
+	return _c
+}
+
+func (_c *AuthService_FindUserByName_Call) Return(_a0 *domain.User) *AuthService_FindUserByName_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *AuthService_FindUserByName_Call) RunAndReturn(run func(string) *domain.User) *AuthService_FindUserByName_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // FindUserByNameAndPassword provides a mock function with given fields: name, password
 func (_m *AuthService) FindUserByNameAndPassword(name string, password string) *domain.User {
 	ret := _m.Called(name, password)
