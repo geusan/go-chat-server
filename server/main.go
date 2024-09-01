@@ -49,6 +49,9 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},
+	}))
 	e.Static("/", "./templates")
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	v1 := e.Group("/v1")
