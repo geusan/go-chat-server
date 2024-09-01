@@ -14,6 +14,7 @@ type AuthService interface {
 	Register(name string, password string) *domain.User
 	FindUserById(id uint) *domain.User
 	FindUserByName(name string) *domain.User
+	CheckPassword(user *domain.User, password string) bool
 }
 
 type AuthHandler struct {
@@ -46,7 +47,18 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	if err := c.Bind(&body); err != nil {
 		return err
 	}
-	user := h.Service.FindUserByNameAndPassword(body.Name, body.Password)
+	user := h.Service.FindUserByName(body.Name)
+	if user == nil {
+		return c.JSON(http.StatusUnauthorized, ResponseError{
+			Message: "없는 유저입니다.",
+		})
+	}
+	authorized := h.Service.CheckPassword(user, body.Password)
+	if !authorized {
+		return c.JSON(http.StatusUnauthorized, ResponseError{
+			Message: "비밀번호가 틀렸습니다.",
+		})
+	}
 	user.Password = ""
 	token, err := user.GenerateJWT()
 	if err != nil {
@@ -55,8 +67,15 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	// Set cookie for Auth
 	cookie := new(http.Cookie)
 	cookie.Name = "_auth"
-	cookie.Value = "Bearer " + token
+	cookie.Value = token
 	cookie.Expires = time.Now().Add(24 * time.Hour)
+	cookie.Domain = "localhost"
+	cookie.Path = "/"
+	cookie.HttpOnly = true
+	// TODO: In production mode set SameSite
+	cookie.SameSite = http.SameSiteNoneMode
+	cookie.Secure = true
+
 	c.SetCookie(cookie)
 	responseBody := &domain.ResponseUser{
 		Id:    user.Id,

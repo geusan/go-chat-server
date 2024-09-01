@@ -21,6 +21,53 @@ func (_m *AuthService) EXPECT() *AuthService_Expecter {
 	return &AuthService_Expecter{mock: &_m.Mock}
 }
 
+// CheckPassword provides a mock function with given fields: user, password
+func (_m *AuthService) CheckPassword(user *domain.User, password string) bool {
+	ret := _m.Called(user, password)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CheckPassword")
+	}
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(*domain.User, string) bool); ok {
+		r0 = rf(user, password)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
+// AuthService_CheckPassword_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CheckPassword'
+type AuthService_CheckPassword_Call struct {
+	*mock.Call
+}
+
+// CheckPassword is a helper method to define mock.On call
+//   - user *domain.User
+//   - password string
+func (_e *AuthService_Expecter) CheckPassword(user interface{}, password interface{}) *AuthService_CheckPassword_Call {
+	return &AuthService_CheckPassword_Call{Call: _e.mock.On("CheckPassword", user, password)}
+}
+
+func (_c *AuthService_CheckPassword_Call) Run(run func(user *domain.User, password string)) *AuthService_CheckPassword_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(*domain.User), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *AuthService_CheckPassword_Call) Return(_a0 bool) *AuthService_CheckPassword_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *AuthService_CheckPassword_Call) RunAndReturn(run func(*domain.User, string) bool) *AuthService_CheckPassword_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // FindUserById provides a mock function with given fields: id
 func (_m *AuthService) FindUserById(id uint) *domain.User {
 	ret := _m.Called(id)

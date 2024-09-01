@@ -2,6 +2,7 @@ package auth
 
 import (
 	"api-server/domain"
+	"api-server/internal/repository/rdb"
 )
 
 //go:generate mockery --name UserRepository
@@ -27,7 +28,7 @@ func (a *AuthService) FindUserByNameAndPassword(name string, password string) *d
 	}
 	user, err := a.userRepo.FindOne(query)
 	if err != nil {
-		panic(err)
+		return nil
 	}
 	return user
 }
@@ -52,4 +53,8 @@ func (a *AuthService) Register(name string, password string) *domain.User {
 	// TODO: add validating password with regex
 	user := a.userRepo.Create(&domain.User{Name: name, Password: password})
 	return user
+}
+
+func (a *AuthService) CheckPassword(user *domain.User, password string) bool {
+	return user.Password == rdb.Salt(password)
 }
