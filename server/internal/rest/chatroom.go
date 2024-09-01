@@ -1,9 +1,7 @@
 package rest
 
 import (
-	"api-server/chat"
 	"api-server/domain"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -14,7 +12,6 @@ import (
 type ChatService interface {
 	FindById(id uint) *domain.Chatroom
 	Fetch() []domain.Chatroom
-	GetHub(chatroom string) *chat.Hub
 	Create(name string, user *domain.User) *domain.Chatroom
 	Delete(chatroom *domain.Chatroom)
 }
@@ -34,7 +31,6 @@ func NewChatroomHandler(e *echo.Group, svc ChatService, authService AuthService)
 	e.POST("/rooms", handler.CreateChatroom)
 	e.DELETE("/rooms/:roomId", handler.RemoveChatroom)
 	e.GET("/rooms/:roomId/open", handler.OpenChat)
-	e.GET("/rooms/:roomId/close", handler.CloseChat)
 }
 
 // Fetch chatrooms
@@ -110,32 +106,9 @@ func (h *ChatroomHandler) RemoveChatroom(c echo.Context) error {
 }
 
 func (h *ChatroomHandler) OpenChat(c echo.Context) error {
-	chatroom := c.Param("chatroom")
-	hub := h.ChatService.GetHub(chatroom)
-	openWebsocket(hub, c.Response().Writer, c.Request())
+	// TODO: make chat url
+	// chatroom := c.Param("chatroom")
+	// hub := h.ChatService.GetHub(chatroom)
+	// openWebsocket(hub, c.Response().Writer, c.Request())
 	return nil
-}
-
-func (h *ChatroomHandler) CloseChat(c echo.Context) error {
-	chatroom := c.Param("chatroom")
-	hub := h.ChatService.GetHub(chatroom)
-	hub.Close()
-	return nil
-}
-
-func openWebsocket(hub *chat.Hub, w http.ResponseWriter, r *http.Request) {
-
-	conn, err := chat.Upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	client := chat.NewChatClient(hub, conn, make(chan []byte, 256))
-	client.Hub.AddClient(client)
-
-	// Allow collection of memory referenced by the caller by doing all work in
-	// new goroutines.
-	go client.WritePump()
-	go client.ReadPump()
 }
