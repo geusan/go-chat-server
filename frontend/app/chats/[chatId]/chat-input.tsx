@@ -1,7 +1,5 @@
 'use client'
 import Toast from "./toast";
-import useTimerState from "./user-timer-state";
-import { useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
 type Props = {
@@ -21,15 +19,10 @@ const ChatInput = ({
   isLoading,
   onSubmit,
 }: Props) => {
-  const [toast, setToast] = useTimerState<boolean>({ initialState: false });
   const canSubmit = !isLoading && !isFinished;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target;
-
-    if (value.length > MAX_INPUT_LENGTH) {
-      setToast(true);
-    }
 
     onInputChange(e);
   };
@@ -79,7 +72,7 @@ const ChatInput = ({
           보내기
         </button>
       </form>
-      <Toast type="error" show={!!toast}>
+      <Toast type="error" show={false}>
         질문은 {MAX_INPUT_LENGTH}자 이내로 입력가능해요!
       </Toast>
     </div>

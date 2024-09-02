@@ -25,7 +25,16 @@ function ChatMeesage({
 
 async function getChatroomUrl(_chatId: string | string[]): Promise<[any, any]> {
   const chatId = typeof _chatId === "string" ? _chatId : _chatId[0];
-  const res = await fetch(API_DOMAIN + `/rooms/${chatId}/connect`);
+  const res = await fetch(API_DOMAIN + `/rooms/${chatId}/open`, { credentials: 'include', mode: 'cors'});
+  const data = await res.json();
+  if (res.ok) {
+    return [data, null];
+  }
+  return [null, data];
+}
+
+async function getMe(): Promise<[any, any]> {
+  const res = await fetch(API_DOMAIN + `/me`, { credentials: 'include', mode: 'cors'});
   const data = await res.json();
   if (res.ok) {
     return [data, null];
@@ -36,10 +45,27 @@ async function getChatroomUrl(_chatId: string | string[]): Promise<[any, any]> {
 export default function Chatroom() {
   const { chatId } = useParams();
   const [input, onInputChange] = useState("");
+  const [user, setUser] = useState<any>();
   const [chatroomUrl, setChatroomUrl] = useState("");
-
-  const {} = useChatSocket({
-    onMessage: (e) => console.log(e),
+  const [chats, setChats] = useState<any[]>([
+    { content: "Sample message 1", role: "user" },
+    { content: "Sample message 2", role: "user" },
+    { content: "Sample message 3", role: "owner" },
+    { content: "Sample message 4", role: "user" },
+    { content: "Sample message 1", role: "user" },
+    { content: "Sample message 2", role: "user" },
+    { content: "Sample message 2", role: "user" },
+    { content: "Sample message 3", role: "owner" },
+    { content: "Sample message 4", role: "user" },
+  ]);
+  const { send } = useChatSocket({
+    onMessage: (e) => {
+      const msg = JSON.parse(e.data);
+      if (msg.role === user?.name) {
+        return;
+      }
+      setChats(s => [...s, msg])
+    },
     onError: (e) => console.log(e),
     onClose: (e) => console.log(e),
     chatroomUrl,
@@ -47,34 +73,24 @@ export default function Chatroom() {
   useEffect(() => {
     getChatroomUrl(chatId).then(([data, err]) => {
       if (err) {
-        alert(err);
+        alert(JSON.stringify(err));
         return;
       }
       setChatroomUrl(data.url);
     });
+    getMe().then(([data, err]) => {
+      if (err) {
+        alert(JSON.stringify(err));
+        return;
+      }
+      setUser(data);
+    })
   }, []);
   return (
     <div className="min-h-screen flex bg-base-200 justify-center">
       <div className="flex-1 overflow-y-scroll mb-16 max-w-lg">
         <ChatList
-          chats={[
-            { content: "Sample message 1", role: "user" },
-            { content: "Sample message 2", role: "user" },
-            { content: "Sample message 3", role: "owner" },
-            { content: "Sample message 4", role: "user" },
-            { content: "Sample message 1", role: "user" },
-            { content: "Sample message 2", role: "user" },
-            { content: "Sample message 3", role: "owner" },
-            { content: "Sample message 4", role: "user" },
-            { content: "Sample message 1", role: "user" },
-            { content: "Sample message 2", role: "user" },
-            { content: "Sample message 3", role: "owner" },
-            { content: "Sample message 4", role: "user" },
-            { content: "Sample message 1", role: "user" },
-            { content: "Sample message 2", role: "user" },
-            { content: "Sample message 3", role: "owner" },
-            { content: "Sample message 4", role: "user" },
-          ]}
+          chats={chats}
           isLoading={false}
         />
       </div>
@@ -83,7 +99,7 @@ export default function Chatroom() {
         onInputChange={(e) => onInputChange(e.target.value)}
         isLoading={false}
         isFinished={false}
-        onSubmit={() => console.log("hey")}
+        onSubmit={() => {send(JSON.stringify({role: user?.name, content: input}));onInputChange('')}}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   chatroomUrl: string;
@@ -14,30 +14,26 @@ export const useChatSocket = ({
   onError,
 }: Props) => {
   const [conn, setConn] = useState<WebSocket>();
+  
   useEffect(() => {
-    if (chatroomUrl) {
-      const connection = new WebSocket(chatroomUrl);
-      setConn(connection);
-      return () => {
-        if (connection) connection.close();
-      }
+    if (conn && conn.CONNECTING) return;
+    if (!chatroomUrl) return;
+
+    const ws = new WebSocket(chatroomUrl);
+    ws.onclose = function (e) {
+      onClose(e);
+    };
+    ws.onmessage = function (e) {
+      onMessage(e);
+    };
+    ws.onerror = function (e) {
+      onError(e);
+    };
+    setConn(ws);
+    return () => {
+      ws.close();
     }
   }, [chatroomUrl]);
-
-  useEffect(() => {
-    if (conn) {
-      conn.onclose = function (e) {
-        onClose(e);
-      };
-      conn.onmessage = function (e) {
-        onMessage(e);
-        console.log(e.data);
-      };
-      conn.onerror = function (e) {
-        onError(e);
-      };
-    }
-  }, [conn]);
 
   const close = () => { conn && conn.close() };
   const send = (msg: string) => { conn && conn.send(msg) };
