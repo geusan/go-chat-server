@@ -2,6 +2,7 @@ package rest
 
 import (
 	"api-server/domain"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -14,6 +15,8 @@ type ChatService interface {
 	Fetch() []domain.Chatroom
 	Create(name string, user *domain.User) *domain.Chatroom
 	Delete(chatroom *domain.Chatroom)
+	Open(chatroom *domain.Chatroom, user *domain.User) string
+	AddServer(url string)
 }
 
 type ChatroomHandler struct {
@@ -105,10 +108,36 @@ func (h *ChatroomHandler) RemoveChatroom(c echo.Context) error {
 	return c.JSON(http.StatusOK, "")
 }
 
+type ChatroomUrlResponse struct {
+	Url string `json:"url"`
+}
+
+// Open socket Chatroom
+//
+// @Summary Find chatroom socket address
+// @Description get chatroom socket
+// @Tags chat
+// @Accept json
+// @Produce json
+// @Param	Authorization	header	string	true "Bearer XXX"
+// @Param	roomId	path int true "chatroom id"
+// @Success	200	{object}	ChatroomUrlResponse
+// @Success	400	{object}	ResponseError
+// @Success	404	{object}	ResponseError
+// @Success	500	{object}	ResponseError
+// @Router       /rooms/{roomId}/open [get]
 func (h *ChatroomHandler) OpenChat(c echo.Context) error {
-	// TODO: make chat url
-	// chatroom := c.Param("chatroom")
-	// hub := h.ChatService.GetHub(chatroom)
-	// openWebsocket(hub, c.Response().Writer, c.Request())
-	return nil
+	rawRoomId := c.Param("roomId")
+	user := c.Get("auth").(domain.User)
+	roomId, err := strconv.ParseInt(rawRoomId, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	chatroom := h.ChatService.FindById(uint(roomId))
+
+	serverUrl := h.ChatService.Open(chatroom, &user)
+
+	return c.JSON(http.StatusOK, ChatroomUrlResponse{
+		Url: serverUrl + fmt.Sprintf("/rooms/%d/open", chatroom.Id),
+	})
 }

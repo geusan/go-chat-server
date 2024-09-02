@@ -17,7 +17,7 @@ func NewChatroomRepository(conn *gorm.DB) *ChatroomRepository {
 func (m *ChatroomRepository) FindById(id uint) (result *domain.Chatroom) {
 	res := m.Conn.
 		Model(&domain.Chatroom{}).
-		Where(&domain.Chatroom{ID: id}).
+		Where(&domain.Chatroom{Id: id}).
 		First(&result)
 
 	if res.Error != nil {
@@ -52,7 +52,7 @@ func (m *ChatroomRepository) Delete(id uint) error {
 	res := m.Conn.
 		Model(&domain.Chatroom{}).
 		Unscoped().
-		Delete(&domain.Chatroom{ID: id})
+		Delete(&domain.Chatroom{Id: id})
 	if res.Error != nil {
 		panic(res)
 	}

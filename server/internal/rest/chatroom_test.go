@@ -104,7 +104,7 @@ func TestRemoveChatroom(t *testing.T) {
 		c.SetParamValues(strconv.Itoa(int(roomId)))
 
 		expectedChatroom := domain.Chatroom{
-			ID:    roomId,
+			Id:    roomId,
 			Name:  "chatoom 1",
 			Limit: 5,
 		}

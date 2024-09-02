@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"api-server/domain"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -19,26 +20,10 @@ func NewUserHandler(e *echo.Group, svc ChatService) {
 		Service: svc,
 	}
 
-	e.GET("/users", handler.Fetch)
+	e.GET("/me", handler.GetMe)
 }
 
-func (h *UserHandler) Fetch(c echo.Context) error {
-	return c.JSON(http.StatusOK, "")
+func (h *UserHandler) GetMe(c echo.Context) error {
+	user := c.Get("auth").(domain.User)
+	return c.JSON(http.StatusOK, &user)
 }
-
-// func getStatusCode(err error) int {
-// 	if err == nil {
-// 		return http.StatusOK
-// 	}
-// 	logrus.Error(err)
-// 	switch err {
-// 	case domain.ErrInternalServerError:
-// 		return http.StatusInternalServerError
-// 	case domain.ErrNotFound:
-// 		return http.StatusNotFound
-// 	case domain.ErrConflict:
-// 		return http.StatusConflict
-// 	default:
-// 		return http.StatusInternalServerError
-// 	}
-// }

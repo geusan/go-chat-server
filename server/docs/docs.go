@@ -12,7 +12,6 @@ const docTemplate = `{
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "담당자 마운틴",
-            "url": "mailto:dnay2k@gmail.com",
             "email": "dnay2k@gmail.com"
         },
         "license": {
@@ -309,6 +308,63 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/rooms/{roomId}/open": {
+            "get": {
+                "description": "get chatroom socket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Find chatroom socket address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer XXX",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "chatroom id",
+                        "name": "roomId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ChatroomUrlResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -400,6 +456,14 @@ const docTemplate = `{
                 "valid": {
                     "description": "Valid is true if Time is not NULL",
                     "type": "boolean"
+                }
+            }
+        },
+        "rest.ChatroomUrlResponse": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
                 }
             }
         },

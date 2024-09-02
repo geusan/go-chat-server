@@ -60,6 +60,11 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
+  rest.ChatroomUrlResponse:
+    properties:
+      url:
+        type: string
+    type: object
   rest.CreateChatroomDTO:
     properties:
       name:
@@ -76,7 +81,6 @@ info:
   contact:
     email: dnay2k@gmail.com
     name: 담당자 마운틴
-    url: mailto:dnay2k@gmail.com
   description: 소켓을 이용한 채팅서버 API 문서
   license:
     name: Apache 2.0
@@ -272,6 +276,44 @@ paths:
           schema:
             $ref: '#/definitions/rest.ResponseError'
       summary: Delete chatroom
+      tags:
+      - chat
+  /rooms/{roomId}/open:
+    get:
+      consumes:
+      - application/json
+      description: get chatroom socket
+      parameters:
+      - description: Bearer XXX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: chatroom id
+        in: path
+        name: roomId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ChatroomUrlResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.ResponseError'
+      summary: Find chatroom socket address
       tags:
       - chat
 swagger: "2.0"

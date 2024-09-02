@@ -5,6 +5,7 @@ import (
 
 	"api-server/auth"
 	"api-server/chat"
+	"api-server/internal/repository/consistent_hash"
 	"api-server/internal/repository/rdb"
 
 	"api-server/internal/rest"
@@ -41,10 +42,12 @@ func main() {
 		logrus.Error("error in DB", err)
 		return
 	}
+	ring := consistent_hash.CreateRing()
+	redisClient := consistent_hash.NewChatroomHashRepository(ring)
 
 	userRepo := rdb.NewUserRepository(db)
 	chatroomRepo := rdb.NewChatroomRepository(db)
-	chatService := chat.NewChatService(userRepo, chatroomRepo)
+	chatService := chat.NewChatService(userRepo, chatroomRepo, redisClient)
 	authService := auth.NewAuthService(userRepo)
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -61,9 +64,11 @@ func main() {
 	v1 := e.Group("/v1")
 	anonymouseRoute := v1.Group("")
 	authorizedRoute := v1.Group("")
+	rest.NewInfraHandler(anonymouseRoute, chatService)
 	rest.NewAuthHandler(anonymouseRoute, authService)
 	localMiddleware.UseAuthMiddleware(authorizedRoute, authService)
 	rest.NewChatroomHandler(authorizedRoute, chatService, authService)
+	rest.NewUserHandler(authorizedRoute, chatService)
 
 	e.Logger.Fatal(e.Start(*address))
 }

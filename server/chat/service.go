@@ -2,6 +2,7 @@ package chat
 
 import (
 	"api-server/domain"
+	"fmt"
 )
 
 //go:generate mockery --name UserRepository
@@ -19,15 +20,23 @@ type ChatroomRepository interface {
 	Delete(id uint) error
 }
 
+//go:generate mockery --name ChatroomHashRepository
+type ChatroomHashRepository interface {
+	AddServer(url string)
+	GetServer(key string) string
+}
+
 type ChatService struct {
 	userRepo     UserRepository
 	chatroomRepo ChatroomRepository
+	ccr          ChatroomHashRepository
 }
 
-func NewChatService(u UserRepository, c ChatroomRepository) *ChatService {
+func NewChatService(u UserRepository, c ChatroomRepository, r ChatroomHashRepository) *ChatService {
 	return &ChatService{
 		userRepo:     u,
 		chatroomRepo: c,
+		ccr:          r,
 	}
 }
 
@@ -48,4 +57,14 @@ func (s *ChatService) Create(name string, user *domain.User) *domain.Chatroom {
 
 func (s *ChatService) Delete(chatroom *domain.Chatroom) {
 	s.chatroomRepo.Delete(chatroom.ID)
+}
+
+func (s *ChatService) Open(chatroom *domain.Chatroom, user *domain.User) string {
+	// Save redis for auth
+	member := s.ccr.GetServer(fmt.Sprint(chatroom.Id))
+	return member
+}
+
+func (s *ChatService) AddServer(url string) {
+	s.ccr.AddServer(url)
 }

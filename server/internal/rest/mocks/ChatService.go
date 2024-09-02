@@ -21,6 +21,39 @@ func (_m *ChatService) EXPECT() *ChatService_Expecter {
 	return &ChatService_Expecter{mock: &_m.Mock}
 }
 
+// AddServer provides a mock function with given fields: url
+func (_m *ChatService) AddServer(url string) {
+	_m.Called(url)
+}
+
+// ChatService_AddServer_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddServer'
+type ChatService_AddServer_Call struct {
+	*mock.Call
+}
+
+// AddServer is a helper method to define mock.On call
+//   - url string
+func (_e *ChatService_Expecter) AddServer(url interface{}) *ChatService_AddServer_Call {
+	return &ChatService_AddServer_Call{Call: _e.mock.On("AddServer", url)}
+}
+
+func (_c *ChatService_AddServer_Call) Run(run func(url string)) *ChatService_AddServer_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string))
+	})
+	return _c
+}
+
+func (_c *ChatService_AddServer_Call) Return() *ChatService_AddServer_Call {
+	_c.Call.Return()
+	return _c
+}
+
+func (_c *ChatService_AddServer_Call) RunAndReturn(run func(string)) *ChatService_AddServer_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Create provides a mock function with given fields: name, user
 func (_m *ChatService) Create(name string, user *domain.User) *domain.Chatroom {
 	ret := _m.Called(name, user)
@@ -194,6 +227,53 @@ func (_c *ChatService_FindById_Call) Return(_a0 *domain.Chatroom) *ChatService_F
 }
 
 func (_c *ChatService_FindById_Call) RunAndReturn(run func(uint) *domain.Chatroom) *ChatService_FindById_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Open provides a mock function with given fields: chatroom, user
+func (_m *ChatService) Open(chatroom *domain.Chatroom, user *domain.User) string {
+	ret := _m.Called(chatroom, user)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Open")
+	}
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(*domain.Chatroom, *domain.User) string); ok {
+		r0 = rf(chatroom, user)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
+// ChatService_Open_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Open'
+type ChatService_Open_Call struct {
+	*mock.Call
+}
+
+// Open is a helper method to define mock.On call
+//   - chatroom *domain.Chatroom
+//   - user *domain.User
+func (_e *ChatService_Expecter) Open(chatroom interface{}, user interface{}) *ChatService_Open_Call {
+	return &ChatService_Open_Call{Call: _e.mock.On("Open", chatroom, user)}
+}
+
+func (_c *ChatService_Open_Call) Run(run func(chatroom *domain.Chatroom, user *domain.User)) *ChatService_Open_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(*domain.Chatroom), args[1].(*domain.User))
+	})
+	return _c
+}
+
+func (_c *ChatService_Open_Call) Return(_a0 string) *ChatService_Open_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *ChatService_Open_Call) RunAndReturn(run func(*domain.Chatroom, *domain.User) string) *ChatService_Open_Call {
 	_c.Call.Return(run)
 	return _c
 }

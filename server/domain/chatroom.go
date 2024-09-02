@@ -6,7 +6,7 @@ import (
 
 type Chatroom struct {
 	gorm.Model
-	ID      uint   `json:"id"`
+	Id      uint   `json:"id"`
 	Name    string `json:"name"`
 	Limit   int    `json:"limit"`
 	OwnerID uint   `json:"-"`

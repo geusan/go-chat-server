@@ -12,6 +12,8 @@ import (
 func TestFetch(t *testing.T) {
 	mockChatroomRepo := new(mocks.ChatroomRepository)
 	mockUserRepo := new(mocks.UserRepository)
+	mockChatroomHashRepo := new(mocks.ChatroomHashRepository)
+
 	var mockChatrooms []domain.Chatroom
 	mockChatrooms = append(mockChatrooms, domain.Chatroom{
 		Name:  "chatroom 1",
@@ -26,7 +28,7 @@ func TestFetch(t *testing.T) {
 			On("Fetch").
 			Return(mockChatrooms).
 			Once()
-		service := chat.NewChatService(mockUserRepo, mockChatroomRepo)
+		service := chat.NewChatService(mockUserRepo, mockChatroomRepo, mockChatroomHashRepo)
 		actualChatrooms := service.Fetch()
 		assert.Equal(t, len(mockChatrooms), len(actualChatrooms))
 		mockChatroomRepo.AssertExpectations(t)
@@ -36,8 +38,9 @@ func TestFetch(t *testing.T) {
 func TestFindById(t *testing.T) {
 	mockChatroomRepo := new(mocks.ChatroomRepository)
 	mockUserRepo := new(mocks.UserRepository)
+	mockChatroomHashRepo := new(mocks.ChatroomHashRepository)
 	mockChatroom := &domain.Chatroom{
-		ID:    uint(1),
+		Id:    uint(1),
 		Name:  "chatroom 1",
 		Limit: 5,
 	}
@@ -47,7 +50,7 @@ func TestFindById(t *testing.T) {
 			On("FindById", mockChatroom.ID).
 			Return(mockChatroom).
 			Once()
-		service := chat.NewChatService(mockUserRepo, mockChatroomRepo)
+		service := chat.NewChatService(mockUserRepo, mockChatroomRepo, mockChatroomHashRepo)
 		actualChatroom := service.FindById(mockChatroom.ID)
 		assert.Equal(t, mockChatroom.ID, actualChatroom.ID)
 		mockChatroomRepo.AssertExpectations(t)
@@ -57,6 +60,7 @@ func TestFindById(t *testing.T) {
 func TestCreateChatroom(t *testing.T) {
 	mockChatroomRepo := new(mocks.ChatroomRepository)
 	mockUserRepo := new(mocks.UserRepository)
+	mockChatroomHashRepo := new(mocks.ChatroomHashRepository)
 	mockUser := &domain.User{
 		Id:       1,
 		Name:     "John",
@@ -73,7 +77,7 @@ func TestCreateChatroom(t *testing.T) {
 			On("Create", mockChatroom.Name, mockUser).
 			Return(mockChatroom).
 			Once()
-		service := chat.NewChatService(mockUserRepo, mockChatroomRepo)
+		service := chat.NewChatService(mockUserRepo, mockChatroomRepo, mockChatroomHashRepo)
 		actualChatroom := service.Create(mockChatroom.Name, mockUser)
 		assert.Equal(t, mockChatroom.Owner.Id, actualChatroom.Owner.Id)
 		assert.Equal(t, mockChatroom.Name, actualChatroom.Name)
@@ -84,8 +88,9 @@ func TestCreateChatroom(t *testing.T) {
 func TestDeleteChatroom(t *testing.T) {
 	mockChatroomRepo := new(mocks.ChatroomRepository)
 	mockUserRepo := new(mocks.UserRepository)
+	mockChatroomHashRepo := new(mocks.ChatroomHashRepository)
 	mockChatroom := &domain.Chatroom{
-		ID:    1,
+		Id:    1,
 		Name:  "chatroom 1",
 		Limit: 5,
 	}
@@ -95,7 +100,7 @@ func TestDeleteChatroom(t *testing.T) {
 			On("Delete", mockChatroom.ID).
 			Return(nil).
 			Once()
-		service := chat.NewChatService(mockUserRepo, mockChatroomRepo)
+		service := chat.NewChatService(mockUserRepo, mockChatroomRepo, mockChatroomHashRepo)
 		service.Delete(mockChatroom)
 		mockChatroomRepo.AssertExpectations(t)
 	})
