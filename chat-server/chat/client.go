@@ -7,6 +7,8 @@ package chat
 import (
 	"bytes"
 	"log"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -34,6 +36,9 @@ var (
 var Upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return strings.Contains(r.Host, "localhost")
+	},
 }
 
 // Client is a middleman between the websocket connection and the hub.
