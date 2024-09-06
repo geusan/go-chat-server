@@ -38,6 +38,10 @@ func (h *Hub) RemoveClient(client *Client) {
 	h.unregister <- client
 }
 
+func (h *Hub) GetCount() int {
+	return len(h.clients)
+}
+
 func (h *Hub) Close() {
 	for client := range h.clients {
 		close(client.send)

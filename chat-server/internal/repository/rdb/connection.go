@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// TODO: make environment variable
 var dsn = "root:localhost@tcp(127.0.0.1:3306)/chat?charset=utf8mb4&parseTime=True&loc=Local"
 
 func OpenTestDB(Conn gorm.ConnPool) (*gorm.DB, error) {

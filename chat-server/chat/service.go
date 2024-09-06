@@ -15,7 +15,7 @@ func NewChatService(c ChatroomRepository) *ChatService {
 
 var hubMap = make(map[string]*Hub)
 
-func (s *ChatService) GetHub(chatroom string) *Hub {
+func (s *ChatService) GetOrCreateHub(chatroom string) *Hub {
 	hub := createOrGetSocket(chatroom)
 	return hub
 }
@@ -25,6 +25,11 @@ func (s *ChatService) DeleteHub(chatroom string) *Hub {
 	if hub != nil {
 		hub.Close()
 	}
+	return hub
+}
+
+func (s *ChatService) GetHub(chatroom string) *Hub {
+	hub := hubMap[chatroom]
 	return hub
 }
 
