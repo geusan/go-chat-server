@@ -1,8 +1,6 @@
 package consistent_hash
 
 import (
-	"api-server/domain"
-
 	"github.com/buraksezer/consistent"
 	"github.com/cespare/xxhash/v2"
 )
@@ -27,11 +25,6 @@ func CreateRing() *consistent.Consistent {
 
 type ChatroomHashRepository struct {
 	ConsistentRing *consistent.Consistent
-}
-
-type ChatUser struct {
-	User     *domain.User     `json:"user"`
-	Chatroom *domain.Chatroom `json:"chatroom"`
 }
 
 func NewChatroomHashRepository(conn *consistent.Consistent) *ChatroomHashRepository {
