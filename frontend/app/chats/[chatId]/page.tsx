@@ -47,17 +47,7 @@ export default function Chatroom() {
   const [input, onInputChange] = useState("");
   const [user, setUser] = useState<any>();
   const [chatroomUrl, setChatroomUrl] = useState("");
-  const [chats, setChats] = useState<any[]>([
-    { content: "Sample message 1", role: "user" },
-    { content: "Sample message 2", role: "user" },
-    { content: "Sample message 3", role: "owner" },
-    { content: "Sample message 4", role: "user" },
-    { content: "Sample message 1", role: "user" },
-    { content: "Sample message 2", role: "user" },
-    { content: "Sample message 2", role: "user" },
-    { content: "Sample message 3", role: "owner" },
-    { content: "Sample message 4", role: "user" },
-  ]);
+  const [chats, setChats] = useState<any[]>([]);
   const { send } = useChatSocket({
     onMessage: (e) => {
       const msg = JSON.parse(e.data);
@@ -66,8 +56,8 @@ export default function Chatroom() {
       }
       setChats(s => [...s, msg])
     },
-    onError: (e) => console.log(e),
-    onClose: (e) => console.log(e),
+    onError: (e) => alert("Error!"),
+    onClose: (e) => alert("Chatting is closed"),
     chatroomUrl,
   });
   useEffect(() => {
