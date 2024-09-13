@@ -77,6 +77,8 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	cookie.Secure = true
 
 	c.SetCookie(cookie)
+	c.Response().Header().Set("Set-Authorization", token)
+
 	responseBody := &domain.ResponseUser{
 		Id:    user.Id,
 		Name:  user.Name,

@@ -12,7 +12,7 @@ type User struct {
 	gorm.Model
 	Id       uint   `json:"id" gorm:"primaryKey"`
 	Name     string `json:"name" gorm:"unique"`
-	Password string `json:"password"`
+	Password string `json:"-"`
 }
 
 type AddUser struct {

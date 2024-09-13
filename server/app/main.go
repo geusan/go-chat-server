@@ -53,10 +53,10 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:8080"},
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:8080", "http://localhost:3001"},
 		AllowMethods:     []string{echo.GET, echo.POST, echo.DELETE, echo.PATCH, echo.OPTIONS},
 		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
-		ExposeHeaders:    []string{echo.HeaderAccessControlAllowCredentials},
+		ExposeHeaders:    []string{echo.HeaderAccessControlAllowCredentials, "Set-Authorization"},
 		AllowCredentials: true,
 	}))
 	e.Static("/", "./templates")

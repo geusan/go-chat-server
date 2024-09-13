@@ -48,11 +48,11 @@ func main() {
 	println("Register chat server to API server")
 	body := struct {
 		Url string `json:"url"`
-	}{Url: "http://localhost:8081/v1"}
+	}{Url: "ws://localhost:8081/v1"}
 	buf, _ := json.Marshal(body)
 	res, _ := http.Post("http://localhost:8080/v1/chat-servers", "application/json", bytes.NewBuffer(buf))
 	println("Received", res.StatusCode)
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode != http.StatusCreated {
 		panic("Error in system!!!")
 	}
 
