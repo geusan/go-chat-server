@@ -1,53 +1,37 @@
 # Chat server
 
-채팅서버 튜토리얼 작성
-
-## 목표
-
-- 채팅 서버를 생성한다.
-- 채팅방의 최대 규모는 5인으로 제한한다.
-- 채팅의 콘텐츠는 텍스트와 이미지로 제한한다.
+Chat server with go clean arch
 
 ## Libraries
 - echo server
 - ORM: gorm
 - Docs: swagger
 - testing: mockery
+- Socket: gorilla socket
 
-## 계획
-- 채팅 기능은 소켓을 활용한다.(gorilla socket)
-- 채팅 클라이언트 React로 작성
-- [x] 채팅 서버 개발
-    - [x] 채팅 서비스 API 서버, 채팅 서버 분리
-- [x] API 서버 구축 with echo
-- [x] swagger를 이용한 API document 툴 개발
-- [x] ORM을 이용 (gorm)
-- [x] unit test 작성 연습 포함(Mockery)
-
-
-## 명령어
+## Commands
 
 Swag
 ```bash
-# swag 실행시 gorm.Model을 못찾는 이슈가 있는데 내부 디펜던시 관련 옵션 포함
+# swag (Threre is an issue finding gorm.Model dependency)
 swag init --parseDependency --parseInternal
 
+# connect http://localhost:8000/swagger/index.html
 ```
 
 Mockery
 ```bash
-# 전체 경로 mocks 생성
+# Create all of mocks (If i comment with mockery)
 go generate ./...
 ```
 
 DB
 ```bash
-# gorm의 AutoMigrate 활용
-# TODO: migration manager에 대한 연구 필요
+# TODO: migration manager(HOW TO?)
 go run cli/migration.go
 ```
 
-## 추가 작업
-- [x] 기능이 변경되며 발생한 rdb, service, rest 등 테스트 추가 작업
-- [x] middleware 테스트 추가
-- [ ] DTO와 AddUser 등 이름이 다른 DTO 이름 통일
+
+## TO DO
+- [x] Add middleware tests
+- [ ] Make some class for Exception and DTO
