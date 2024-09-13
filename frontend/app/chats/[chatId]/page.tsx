@@ -89,7 +89,11 @@ export default function Chatroom() {
         onInputChange={(e) => onInputChange(e.target.value)}
         isLoading={false}
         isFinished={false}
-        onSubmit={() => {send(JSON.stringify({role: user?.name, content: input}));onInputChange('')}}
+        onSubmit={() => {
+          setChats(s => [...s, { role: 'me', content: input}]);
+          send(JSON.stringify({role: user?.name, content: input}));
+          onInputChange('');
+        }}
       />
     </div>
   );
