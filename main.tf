@@ -19,26 +19,16 @@ resource "docker_image" "redis" {
   keep_locally = true
 }
 
-# TODO: make docker container
-# chat-server
-# resource "docker_image" "chat-server" {
-#     name = "chat-server"
-#     keep_locally = false
-#     build {
-#         context = "${terraform.workspace}/chat-server"
-#         tag = ["chat-server:develop"]
-#     }
-# }
+# Terraform plan
+# TODO: Build image: api-server
+# TODO: Build image: chat-server
+# TODO: BUild image: frontend
 
-# # api-server
-# resource "docker_image" "api-server" {
-#     name = "api-server"
-#     keep_locally = false
-#     build {
-#         context = "${terraform.workspace}/server"
-#         tag = ["api-server:develop"]
-#     }
-# }
+# TODO: Add container(api-server)
+# TODO: Add 2 containers(chat-server)
+# TODO: Add container(frontend)
+# TODO: Add container(api-server) for run-migrate cli(instant runner)
+
 
 resource "docker_container" "mysql" {
   image = docker_image.mysql.image_id
